@@ -9,10 +9,10 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 
 public class WaterFrameBuffers {
-    protected static final int REFLECTION_WIDTH = 320;
+    protected static final int REFLECTION_WIDTH = 320; //want to keep reflection low-res because it is distorted
     private static final int REFLECTION_HEIGHT = 180;
      
-    protected static final int REFRACTION_WIDTH = 1280;
+    protected static final int REFRACTION_WIDTH = 1280; //keep high-res because no distortion for this image
     private static final int REFRACTION_HEIGHT = 720;
  
     private int reflectionFrameBuffer;

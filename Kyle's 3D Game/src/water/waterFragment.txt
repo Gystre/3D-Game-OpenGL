@@ -24,10 +24,10 @@ void main(void) {
 	//now sample from the ndc coords
 	vec2 refractionTexCoords = vec2(ndc.x, ndc.y);
 	vec2 reflectionTexCoords = vec2(ndc.x, -ndc.y);
-
+	
 	//create a more realistic distortion
 	vec2 distortion1 = (texture(dudvMap, vec2(textureCoords.x + moveFactor, textureCoords.y)).rg * 2.0 - 1.0) * waveStrength; //multiply by 2 and subtract by 1 to get value from -1 to 1
-	vec2 distortion2 = (texture(dudvMap, vec2(textureCoords.x + moveFactor, textureCoords.y + moveFactor)).rg * 2.0 - 1.0) * waveStrength; //multiply by 2 and subtract by 1 to get value from -1 to 1
+	vec2 distortion2 = (texture(dudvMap, vec2(-textureCoords.x + moveFactor, textureCoords.y + moveFactor)).rg * 2.0 - 1.0) * waveStrength;
 	vec2 totalDistortion = distortion1 + distortion2;
 	
 	refractionTexCoords += totalDistortion;
@@ -36,16 +36,16 @@ void main(void) {
 	reflectionTexCoords += totalDistortion;
 	reflectionTexCoords.x = clamp(reflectionTexCoords.x, 0.001, 0.999);
 	reflectionTexCoords.y = clamp(reflectionTexCoords.y, -0.999, -0.001);
-
+	
 	vec4 reflectColor = texture(reflectionTexture, reflectionTexCoords);
 	vec4 refractColor = texture(refractionTexture, refractionTexCoords);
-	
+
+	//SOMETHING ABOUT THIS MESSING UP TRANSPARENCY OF WATER
 	//calculate fresnel effect
 	vec3 viewVector = normalize(toCameraVector);
 	float refractiveFactor = dot(viewVector, vec3(0.0, 1.0, 0.0)); //vec 3 is water surface normal(pointing upwards)
-	refractiveFactor = pow(refractiveFactor, 10.0); //determines how reflective the water is
-	
-	out_Color = mix(reflectColor, refractColor, refractiveFactor);
-	out_Color = mix(out_Color, vec4(0.0, 0.3, 0.5, 1.0), 0.2);
+	refractiveFactor = pow(refractiveFactor, 5.0); //determines how reflective the water is. Higher = more reflective
 
+	out_Color = mix(reflectColor, refractColor, refractiveFactor);
+	out_Color = mix(out_Color, vec4(0.0, 0.3, 0.5, 1.0), 0.2); //add bluey green tint to water
 }

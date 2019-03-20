@@ -26,7 +26,6 @@ import terrains.Terrain;
 import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
-import toolbox.MousePicker;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
 import water.WaterShader;
@@ -125,13 +124,15 @@ public class Main {
 	    WaterShader waterShader = new WaterShader();
 	    guis.add(new GuiTexture(buffers.getRefractionTexture(), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f)));
 	    WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), buffers);
+	    
 	    List<WaterTile> waters = new ArrayList<WaterTile>();
-	    WaterTile waterTile = new WaterTile(75, 75, 0);
+	    WaterTile waterTile = new WaterTile(75, 75, -10);
 	    waters.add(waterTile);
 	    
 //		GuiTexture gui = new GuiTexture(loader.loadTexture("supersaist"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
 	    
-	    //something wrong with displaying refraction texture, could be anything after tutorial 3
+	    //tutorial 6, fresnel effect calculation makes water non-transparent
+	    //CHECK WATERFRAGMENT SHADER
 	    
 	    //REFRACTION: below the water
 	    //REFLECTION: above the water, camera needs to be moved under the water to create this effect
@@ -140,7 +141,6 @@ public class Main {
 	    	//take in keyboard inputs
 	    	player.move(world);
 			camera.move();
-			System.out.println(player.getPosition());
 			
 			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 			
