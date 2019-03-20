@@ -1,0 +1,79 @@
+#version 400 core
+
+in vec2 pass_textureCoords;
+in vec3 surfaceNormal;
+in vec3 toLightVector[4];
+in vec3 toCameraVector;
+in float visibility;
+
+out vec4 out_Color; //output color of pixel
+
+//for multitexturing the world
+uniform sampler2D backgroundTexture;
+uniform sampler2D rTexture;
+uniform sampler2D gTexture;
+uniform sampler2D bTexture;
+uniform sampler2D blendMap;
+
+//for lighting
+uniform vec3 lightColor[4];
+uniform vec3 attenuation[4];
+uniform float shineDamper;
+uniform float reflectivity;
+uniform vec3 skyColor;
+
+void main(void) {
+	vec4 blendMapColor = texture(blendMap, pass_textureCoords);
+	
+	float backTextureAmount = 1 - (blendMapColor.r + blendMapColor.g + blendMapColor.b);
+	vec2 tiledCoords = pass_textureCoords * 40; //multiply by 40 because 40 texture coordinates = 40 tiles per chunk
+	vec4 backgroundTextureColor = texture(backgroundTexture, tiledCoords) * backTextureAmount;
+	vec4 rTextureColor = texture(rTexture, tiledCoords) * blendMapColor.r;
+	vec4 gTextureColor = texture(gTexture, tiledCoords) * blendMapColor.g;
+	vec4 bTextureColor = texture(bTexture, tiledCoords) * blendMapColor.b;
+	
+	//mixture of three colors to get total color of pixel
+	vec4 totalColor = backgroundTextureColor + rTextureColor + gTextureColor + bTextureColor;
+
+	//camera stuff
+	vec3 unitNormal = normalize(surfaceNormal);
+	vec3 unitVectorToCamera = normalize(toCameraVector);
+
+	vec3 totalDiffuse = vec3(0.0);
+	vec3 totalSpecular = vec3(0.0);
+
+	for(int i = 0; i < 4; i++){
+		//attenuation calculations
+		float distance = length(toLightVector[i]);
+		float attFactor = attenuation[i].x + (attenuation[i].y * distance) + (attenuation[i].z * distance * distance);
+	
+		//normalizing vector makes size equal to 1
+		vec3 unitLightVector = normalize(toLightVector[i]);
+		
+		//look up dot product for vectors
+		float nDot1 = dot(unitNormal, unitLightVector);
+		
+		//calculate ambient lighting
+		float brightness = max(nDot1, 0.0);
+		
+		vec3 lightDirection = -unitLightVector;
+		vec3 reflectedLightDirection = reflect(lightDirection, unitNormal);
+		
+		float specularFactor = dot(reflectedLightDirection, unitVectorToCamera);
+		specularFactor = max(specularFactor, 0.0);
+		
+		float dampedFactor = pow(specularFactor, shineDamper);
+		
+		//calculate diffuse and specular lighting coming from each light source
+		//keep a running total of all diffuse and specular lighting
+		totalDiffuse = totalDiffuse + (brightness * lightColor[i]) / attFactor;
+		totalSpecular = totalSpecular + (dampedFactor * reflectivity * lightColor[i]) / attFactor;
+	}
+
+	//calculate total ambient lighting and make sure it doesn't go below 0.2
+	totalDiffuse = max(totalDiffuse, 0.2);
+
+	//returns the color of the pixel at the textures coords
+	out_Color = vec4(totalDiffuse, 1.0) * totalColor + vec4(totalSpecular, 1.0);
+	out_Color = mix(vec4(skyColor, 1.0), out_Color, visibility);
+}
