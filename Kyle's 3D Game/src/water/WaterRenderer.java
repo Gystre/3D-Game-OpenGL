@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import entities.Camera;
+import entities.Light;
 import models.RawModel;
 import render.DisplayManager;
 import render.Loader;
@@ -17,6 +18,7 @@ import toolbox.Maths;
 
 public class WaterRenderer {
 	private static final String DUDV_MAP = "waterDUDV";
+	private static final String NORMAL_MAP = "waterNormal";
 	private static final float WAVE_SPEED = 0.03f;
 	
 	private RawModel quad;
@@ -25,12 +27,15 @@ public class WaterRenderer {
 
 	private float moveFactor = 0;
 	
+	//id of texture when it is loaded
 	private int dudvTexture;
+	private int normalTexture;
 	
 	public WaterRenderer(Loader loader, WaterShader shader, Matrix4f projectionMatrix, WaterFrameBuffers fbos) {
 		this.shader = shader;
 		this.fbos = fbos;
 		this.dudvTexture = loader.loadTexture(DUDV_MAP);
+		this.normalTexture = loader.loadTexture(NORMAL_MAP);
 		
 		shader.start();
 			shader.connectTextureUnits(); //connect the texture coords to the refraction and reflection images
@@ -40,8 +45,8 @@ public class WaterRenderer {
 		setUpVAO(loader);
 	}
 
-	public void render(List<WaterTile> water, Camera camera) {
-		prepareRender(camera);	
+	public void render(List<WaterTile> water, Camera camera, Light sun) {
+		prepareRender(camera, sun);	
 		for (WaterTile tile : water) {
 			Matrix4f modelMatrix = Maths.createTransformationMatrix(
 					new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0,
@@ -52,12 +57,13 @@ public class WaterRenderer {
 		unbind();
 	}
 	
-	private void prepareRender(Camera camera){
+	private void prepareRender(Camera camera, Light sun){
 		shader.start();
 		shader.loadViewMatrix(camera);
 		moveFactor += WAVE_SPEED * DisplayManager.getFrameTimeSeconds();
 		moveFactor %= 1; //loop back to 0 when it reaches 1
 		shader.loadMoveFactor(moveFactor);
+		shader.loadLight(sun);
 		
 		GL30.glBindVertexArray(quad.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
@@ -71,6 +77,9 @@ public class WaterRenderer {
 	
 		GL13.glActiveTexture(GL13.GL_TEXTURE2);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, dudvTexture);
+		
+		GL13.glActiveTexture(GL13.GL_TEXTURE3);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture);
 	
 	}
 	

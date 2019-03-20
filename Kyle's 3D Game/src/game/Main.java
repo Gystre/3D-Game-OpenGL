@@ -56,7 +56,8 @@ public class Main {
 	    
 	    //diffuse lighting is where brightness of object's surface depends on it faces the light
 	    List<Light> lights = new ArrayList<Light>();
-	    lights.add(new Light(new Vector3f(0, 1000, 1000), new Vector3f(255f, 255f, 255f), new Vector3f(1, 0.1f, 0.1f))); //sun
+	    Light sun = new Light(new Vector3f(0, 1000, 1000), new Vector3f(255f, 255f, 255f), new Vector3f(1, 0.1f, 0.1f));
+	    lights.add(sun); //sun
 	    Light redLight = new Light(new Vector3f(185, 3f, 293), new Vector3f(2, 0, 0), new Vector3f(1, 0.01f, 0.002f));
 	    lights.add(redLight);
 	    lights.add(new Light(new Vector3f(370, 17, 293), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f)));
@@ -122,7 +123,6 @@ public class Main {
 	    
 	    WaterFrameBuffers buffers = new WaterFrameBuffers();
 	    WaterShader waterShader = new WaterShader();
-	    guis.add(new GuiTexture(buffers.getRefractionTexture(), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f)));
 	    WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), buffers);
 	    
 	    List<WaterTile> waters = new ArrayList<WaterTile>();
@@ -173,7 +173,7 @@ public class Main {
 			renderer.renderScene(entities, world, lights, camera, new Vector4f(0, 0, 0, 0)); //made all zero to make dot product zero thus nothing gets culled
 			
 	    	//render the water tiles
-	    	waterRenderer.render(waters, camera);
+	    	waterRenderer.render(waters, camera, sun);
 			
 			guiRenderer.render(guis);
 			
