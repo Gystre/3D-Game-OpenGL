@@ -21,6 +21,10 @@ public class WaterRenderer {
 	private static final String NORMAL_MAP = "waterNormal";
 	private static final float WAVE_SPEED = 0.03f;
 	
+	//UPDATE THESE IN MASTER RENDERER if you need to
+	private static final float NEAR_PLANE = 0.1f;
+	private static final float FAR_PLANE = 1000; //how far you can see things
+	
 	private RawModel quad;
 	private WaterShader shader;
 	private WaterFrameBuffers fbos;
@@ -40,6 +44,7 @@ public class WaterRenderer {
 		shader.start();
 			shader.connectTextureUnits(); //connect the texture coords to the refraction and reflection images
 			shader.loadProjectionMatrix(projectionMatrix);
+			shader.loadNearAndFar(NEAR_PLANE, FAR_PLANE);
 		shader.stop();
 		
 		setUpVAO(loader);
@@ -80,10 +85,19 @@ public class WaterRenderer {
 		
 		GL13.glActiveTexture(GL13.GL_TEXTURE3);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalTexture);
+		
+		//get refraction depth texture to calculate soft edges
+		GL13.glActiveTexture(GL13.GL_TEXTURE4);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getRefractionDepthTexture());
+		
+		//enable alpha blending
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	
 	}
 	
 	private void unbind(){
+		GL11.glDisable(GL11.GL_BLEND);
 		GL20.glDisableVertexAttribArray(0);
 		GL30.glBindVertexArray(0);
 		shader.stop();

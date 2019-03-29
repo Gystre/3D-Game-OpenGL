@@ -23,7 +23,7 @@ public class DisplayManager {
 		
 		try {
 			Display.setDisplayMode(new DisplayMode(width, height));
-			Display.create(new PixelFormat(), attribs);
+			Display.create(new PixelFormat().withDepthBits(24), attribs); //with depth bits to prevent water looking jagged and glitchy when zoomed out
 			Display.setTitle("ultra good");
 		} catch (LWJGLException e) {
 			e.printStackTrace();

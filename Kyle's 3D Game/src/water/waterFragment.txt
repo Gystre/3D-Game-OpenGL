@@ -11,12 +11,15 @@ uniform sampler2D reflectionTexture;
 uniform sampler2D refractionTexture;
 uniform sampler2D dudvMap;
 uniform sampler2D normalMap;
+uniform sampler2D depthMap;
 uniform vec3 lightColor;
+uniform float near;
+uniform float far;
 
 //move dudv map overtime to create effect of moving water
 uniform float moveFactor;
 
-const float waveStrength = 0.02;
+const float waveStrength = 0.04;
 const float shineDamper = 20.0;
 const float reflectivity = 0.6;
 
@@ -30,10 +33,22 @@ void main(void) {
 	vec2 refractionTexCoords = vec2(ndc.x, ndc.y);
 	vec2 reflectionTexCoords = vec2(ndc.x, -ndc.y);
 	
+	//convert depth value into distance and get distance from camera to floor
+	float depth = texture(depthMap, refractionTexCoords).r;
+	float floorDistance = 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+	
+	//calculate distance from water surface to camera
+	depth = gl_FragCoord.z;
+	float waterDistance = 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+	
+	//get depth of water
+	float waterDepth = floorDistance - waterDistance;
+	
 	//create a more realistic distortion
 	vec2 distortedTexCoords = texture(dudvMap, vec2(textureCoords.x + moveFactor, textureCoords.y)).rg*0.1;
 	distortedTexCoords = textureCoords + vec2(distortedTexCoords.x, distortedTexCoords.y+moveFactor);
-	vec2 totalDistortion = (texture(dudvMap, distortedTexCoords).rg * 2.0 - 1.0) * waveStrength;
+	//clamp to prevent the weird white edges
+	vec2 totalDistortion = (texture(dudvMap, distortedTexCoords).rg * 2.0 - 1.0) * waveStrength * clamp(waterDepth/20.0, 0.0, 1.0);
 	
 	refractionTexCoords += totalDistortion;
 	refractionTexCoords = clamp(refractionTexCoords, 0.001, 0.999); //prevent weird white line at borders
@@ -45,22 +60,25 @@ void main(void) {
 	vec4 reflectColor = texture(reflectionTexture, reflectionTexCoords);
 	vec4 refractColor = texture(refractionTexture, refractionTexCoords);
 
-	//calculate fresnel effect
-	vec3 viewVector = normalize(toCameraVector);
-	float refractiveFactor = dot(viewVector, vec3(0.0, 1.0, 0.0)); //vec 3 is water surface normal(pointing upwards)
-	refractiveFactor = pow(refractiveFactor, 5.0); //determines how reflective the water is. Higher = more reflective
-	
 	//calculate normals for water to give lighting
 	vec4 normalMapColor = texture(normalMap, distortedTexCoords);
-	vec3 normal = vec3(normalMapColor.r * 2.0 - 1.0, normalMapColor.b, normalMapColor.g * 2.0 - 1.0);
-	normal = normalize(normal);
+	vec3 normal = normalize(vec3(normalMapColor.r * 2.0 - 1.0, normalMapColor.b * 3.0, normalMapColor.g * 2.0 - 1.0));
+	
+	//calculate fresnel effect
+	vec3 viewVector = normalize(toCameraVector);
+	float refractiveFactor = dot(viewVector, vec3(normal)); //vec 3 is water surface normal(pointing upwards)
+	refractiveFactor = pow(refractiveFactor, 5.0); //determines how reflective the water is. Higher = more reflective
+	refractiveFactor = clamp(refractiveFactor, 0.0, 1.0);
 	
 	//specular lighting
 	vec3 reflectedLight = reflect(normalize(fromLightVector), normal);
 	float specular = max(dot(reflectedLight, viewVector), 0.0);
 	specular = pow(specular, shineDamper);
-	vec3 specularHighlights = lightColor * specular * reflectivity;
+	vec3 specularHighlights = lightColor * specular * reflectivity * clamp(waterDepth / 5.0, 0.0, 1.0);
 
 	out_Color = mix(reflectColor, refractColor, refractiveFactor);
 	out_Color = mix(out_Color, vec4(0.0, 0.3, 0.5, 1.0), 0.2) + vec4(specularHighlights, 0.0); //add bluey green tint to water
+	
+	//at water depth 5, water has alpha value of 1 and isn't transparent at all
+	out_Color.a = clamp(waterDepth / 5.0, 0.0, 1.0);
 }

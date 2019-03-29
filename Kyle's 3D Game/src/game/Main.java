@@ -126,13 +126,11 @@ public class Main {
 	    WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), buffers);
 	    
 	    List<WaterTile> waters = new ArrayList<WaterTile>();
-	    WaterTile waterTile = new WaterTile(75, 75, -10);
+	    WaterTile waterTile = new WaterTile(0, 0, -5);
 	    waters.add(waterTile);
 	    
 //		GuiTexture gui = new GuiTexture(loader.loadTexture("supersaist"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
 	    
-	    //tutorial 6, fresnel effect calculation makes water non-transparent
-	    //CHECK WATERFRAGMENT SHADER
 	    
 	    //REFRACTION: below the water
 	    //REFLECTION: above the water, camera needs to be moved under the water to create this effect
@@ -158,7 +156,7 @@ public class Main {
 			float distanceToMoveCamera = 2 * (camera.getPosition().y - waterTile.getHeight());
 			camera.getPosition().y -= distanceToMoveCamera;
 			camera.invertPitch();
-			renderer.renderScene(entities, world, lights, camera, new Vector4f(0, 1, 0, -waterTile.getHeight())); //0,1,0 horizontal plane pointing upwards
+			renderer.renderScene(entities, world, lights, camera, new Vector4f(0, 1, 0, -waterTile.getHeight() + 1f)); //0,1,0 horizontal plane pointing upwards
 			camera.getPosition().y += distanceToMoveCamera;
 			camera.invertPitch();
 			

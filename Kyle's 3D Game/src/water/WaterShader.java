@@ -22,6 +22,9 @@ public class WaterShader extends ShaderProgram {
 	private int location_normalMap;
 	private int location_lightColor;
 	private int location_lightPosition;
+	private int location_depthMap;
+	private int location_near;
+	private int location_far;
 
 	public WaterShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -45,6 +48,9 @@ public class WaterShader extends ShaderProgram {
 		location_normalMap = getUniformLocation("normalMap");
 		location_lightColor = getUniformLocation("lightColor");
 		location_lightPosition = getUniformLocation("lightPosition");
+		location_depthMap = getUniformLocation("depthMap");
+		location_near = getUniformLocation("near");
+		location_far = getUniformLocation("far");
 	}
 	
 	//determine which texture unit the sampler should be sampling from
@@ -53,6 +59,12 @@ public class WaterShader extends ShaderProgram {
 		super.loadInt(location_refractionTexture, 1);
 		super.loadInt(location_dudvMap, 2);
 		super.loadInt(location_normalMap, 3);
+		super.loadInt(location_depthMap, 4);
+	}
+	
+	public void loadNearAndFar(float near, float far) {
+		super.loadFloat(location_near, near);
+		super.loadFloat(location_far, far);
 	}
 	
 	public void loadLight(Light sun) {
