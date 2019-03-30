@@ -16,7 +16,7 @@ import render.Loader;
 
 public class NormalMappedObjLoader {
 
-	private static final String RES_LOC = "res/";
+	private static final String RES_LOC = "./assets/models/";
 
 	public static RawModel loadOBJ(String objFileName, Loader loader) {
 		FileReader isr = null;
@@ -82,7 +82,7 @@ public class NormalMappedObjLoader {
 				texturesArray, normalsArray, tangentsArray);
 		int[] indicesArray = convertIndicesListToArray(indices);
 
-		return loader.loadToVAO(verticesArray, texturesArray, normalsArray, indicesArray);
+		return loader.loadToVAO(verticesArray, texturesArray, normalsArray, tangentsArray, indicesArray);
 	}
 
 	//NEW 

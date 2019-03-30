@@ -3,9 +3,9 @@
 in vec3 position;
 in vec2 textureCoordinates;
 in vec3 normal;
+in vec3 tangent;
 
 out vec2 pass_textureCoordinates;
-out vec3 surfaceNormal;
 out vec3 toLightVector[4];
 out vec3 toCameraVector;
 out float visibility;
@@ -24,7 +24,6 @@ const float gradient = 5.0;
 uniform vec4 plane;
 
 void main(void){
-
 	vec4 worldPosition = transformationMatrix * vec4(position,1.0);
 	gl_ClipDistance[0] = dot(worldPosition, plane);
 	mat4 modelViewMatrix = viewMatrix * transformationMatrix;
@@ -33,11 +32,23 @@ void main(void){
 	
 	pass_textureCoordinates = (textureCoordinates/numberOfRows) + offset;
 	
-	surfaceNormal = (modelViewMatrix * vec4(normal,0.0)).xyz;
-	for(int i=0;i<4;i++){
-		toLightVector[i] = lightPositionEyeSpace[i] - positionRelativeToCam.xyz;
+	//calculate the surface normal for the model
+	vec3 surfaceNormal = (modelViewMatrix * vec4(normal,0.0)).xyz;
+	vec3 normal = normalize(surfaceNormal);
+	vec3 tangent = normalize((modelViewMatrix * vec4(tangent, 0.0)).xyz); //transform tangent into eyespace
+	vec3 biTangent = normalize(cross(normal, tangent)); //give normal that is perpendicular to normal and tangent
+	
+	//multiplying anything by this matrix will convert it from eye space to tangent space
+	mat3 toTangentSpace = mat3(
+		tangent.x, biTangent.x, normal.x,
+		tangent.y, biTangent.y, normal.y,
+		tangent.z, biTangent.z, normal.z
+	);
+	
+	for(int i = 0; i < 4;i++){
+		toLightVector[i] = toTangentSpace * (lightPositionEyeSpace[i] - positionRelativeToCam.xyz);
 	}
-	toCameraVector = -positionRelativeToCam.xyz;
+	toCameraVector = toTangentSpace * (-positionRelativeToCam.xyz);
 	
 	float distance = length(positionRelativeToCam.xyz);
 	visibility = exp(-pow((distance*density),gradient));

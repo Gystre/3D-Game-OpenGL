@@ -2,6 +2,7 @@ package textures;
 
 public class ModelTexture {
 	private int textureID;
+	private int normalMap; //give the option for the texture to have a normal map associated with it
 	
 	private float shineDamper = 1;
 	private float reflectivity = 0;
@@ -59,6 +60,13 @@ public class ModelTexture {
 	public void setReflectivity(float reflectivity) {
 		this.reflectivity = reflectivity;
 	}
-	
+
+	public int getNormalMap() {
+		return normalMap;
+	}
+
+	public void setNormalMap(int normalMap) {
+		this.normalMap = normalMap;
+	}
 	
 }

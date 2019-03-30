@@ -18,6 +18,7 @@ import entities.Player;
 import guis.GuiRenderer;
 import guis.GuiTexture;
 import models.TexturedModel;
+import normalMappingObjConverter.NormalMappedObjLoader;
 import objConverter.OBJLoader;
 import render.DisplayManager;
 import render.Loader;
@@ -73,7 +74,10 @@ public class Main {
 	    world.add(chunk10);
 	    world.add(chunk11);
 	    
-	    ArrayList<Entity> entities = new ArrayList<Entity>();
+	    List<Entity> entities = new ArrayList<Entity>();
+	    List<Entity> normalMapEntities = new ArrayList<Entity>();
+	    
+	    //ENTITIES
 	    Entity lampEntity = new Entity(lampModel, new Vector3f(185, chunk00.getHeightOfTerrain(185, 293), 293),0,0,0,1);
 	    entities.add(lampEntity);
 	    entities.add(new Entity(lampModel, new Vector3f(370, chunk00.getHeightOfTerrain(370, 293), 293),0,0,0,1));
@@ -113,6 +117,14 @@ public class Main {
 	    	entities.add(new Entity(fern, random.nextInt(4),new Vector3f(x, y, z),0,0,0,1));
 	    	
 	    }
+	    
+	    //NORMALMAPED ENTITIES
+	    //load with normalmappedobjloader because it calculates tangents of normal vectors, i think
+	    TexturedModel barrelModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel/barrel", loader), new ModelTexture(loader.loadTexture("models/barrel/barrel")));
+	    barrelModel.getTexture().setShineDamper(10);
+	    barrelModel.getTexture().setReflectivity(0.5f);
+	    barrelModel.getTexture().setNormalMap(loader.loadTexture("models/barrel/barrelNormal"));
+	    normalMapEntities.add(new Entity(barrelModel, new Vector3f(185, 5, 293),0,0,0,1f));
 	    
 	    MasterRenderer renderer = new MasterRenderer(loader);
 	    
@@ -156,24 +168,26 @@ public class Main {
 			float distanceToMoveCamera = 2 * (camera.getPosition().y - waterTile.getHeight());
 			camera.getPosition().y -= distanceToMoveCamera;
 			camera.invertPitch();
-			renderer.renderScene(entities, world, lights, camera, new Vector4f(0, 1, 0, -waterTile.getHeight() + 1f)); //0,1,0 horizontal plane pointing upwards
+			renderer.renderScene(entities, normalMapEntities, world, lights, camera, new Vector4f(0, 1, 0, -waterTile.getHeight() + 1f)); //0,1,0 horizontal plane pointing upwards
 			camera.getPosition().y += distanceToMoveCamera;
 			camera.invertPitch();
 			
 			//render refraction texture
 			buffers.bindRefractionFrameBuffer();
 			//-1 is horizontal plane pointing downwards and 15 is everything above that number will get culled
-			renderer.renderScene(entities, world, lights, camera, new Vector4f(0, -1, 0, waterTile.getHeight()));
+			renderer.renderScene(entities, normalMapEntities, world, lights, camera, new Vector4f(0, -1, 0, waterTile.getHeight()));
 			
 			//switch back to main framebuffer
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 			buffers.unbindCurrentFrameBuffer();
-			renderer.renderScene(entities, world, lights, camera, new Vector4f(0, 0, 0, 0)); //made all zero to make dot product zero thus nothing gets culled
+			renderer.renderScene(entities, normalMapEntities, world, lights, camera, new Vector4f(0, 0, 0, 0)); //made all zero to make dot product zero thus nothing gets culled
 			
 	    	//render the water tiles
 	    	waterRenderer.render(waters, camera, sun);
 			
 			guiRenderer.render(guis);
+			
+			normalMapEntities.get(0).increaseRotation(0, 1, 0);
 			
 			//clear the framebuffer's color buffer and depth buffer
 			DisplayManager.updateDisplay();

@@ -58,13 +58,17 @@ public class MasterRenderer {
 		normalMapRenderer = new NormalMappingRenderer(projectionMatrix);
 	}
 	
-	public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clipPlane) {
+	public void renderScene(List<Entity> entities, List<Entity> normalMapEntities, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clipPlane) {
 		for(Terrain terrain : terrains) {
 			processTerrain(terrain);
 		}
 		
 		for(Entity entity : entities) {
 			processEntity(entity);
+		}
+		
+		for(Entity entity : normalMapEntities) {
+			processNormalMapEntity(entity);
 		}
 		
 		render(lights, camera, clipPlane);
@@ -93,6 +97,9 @@ public class MasterRenderer {
 			renderer.render(entities);
 		shader.stop();
 		
+		//after shader stop because dont want other shader program running, it mess with lighting
+		normalMapRenderer.render(normalMapEntities, clipPlane, lights, camera);
+		
 		terrainShader.start();
 			terrainShader.loadClipPlane(clipPlane);
 			terrainShader.loadSkyColor(RED, GREEN, BLUE);
@@ -103,11 +110,10 @@ public class MasterRenderer {
 		
 		skyboxRenderer.render(camera, RED, GREEN, BLUE);
 		
-		//clear terrain chunks from last frame
+		//clear stuff from last frame
 		terrains.clear();
-		
-		//clear the entities from the last frame
 		entities.clear();
+		normalMapEntities.clear();
 	}
 	
 	public void processTerrain(Terrain terrain) {

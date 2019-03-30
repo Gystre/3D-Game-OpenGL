@@ -41,6 +41,18 @@ public class Loader {
 		return new RawModel(vaoID, indices.length);
 	}
 	
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, float[] tangents, int[] indices) {
+		int vaoID = createVAO();
+		bindIndicesBuffer(indices);
+		storeDataInAttributeList(0, 3, positions); //3d vector pos
+		storeDataInAttributeList(1, 2, textureCoords); //2d texture coords
+		storeDataInAttributeList(2, 3, normals); //2d normal vectors
+		storeDataInAttributeList(3, 3, tangents); //3d tangent vectors
+		unbindVAO();
+		
+		return new RawModel(vaoID, indices.length);
+	}
+	
 	public RawModel loadToVAO(ModelData data) {
 		return loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getIndices());
 	}
