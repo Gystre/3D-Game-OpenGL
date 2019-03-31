@@ -1,5 +1,6 @@
 package game;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -15,6 +16,9 @@ import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Player;
+import fontMeshCreator.FontType;
+import fontMeshCreator.GUIText;
+import fontRendering.TextMaster;
 import guis.GuiRenderer;
 import guis.GuiTexture;
 import models.TexturedModel;
@@ -36,10 +40,15 @@ public class Main {
 	
 	public static void main(String[] args) {
 		DisplayManager.createDisplay();
+		Loader loader = new Loader();
+		TextMaster.init(loader);
+		
+		//apparently my yugothicUI font no work :(
+		FontType font = new FontType(loader.loadFontAtlasTexture("segoeUI"), new File("assets/segoeUI.fnt"));
+		GUIText text = new GUIText("test text babyyyy", 1, font , new Vector2f(0, 0), 1f, true);
+		text.setColor(1, 0, 0);
 		
 		Random random = new Random(System.nanoTime());
-		
-		Loader loader = new Loader();
 		
 		//**********TERRAIN TEXTURE STUFF**********
 		
@@ -143,6 +152,7 @@ public class Main {
 	    
 //		GuiTexture gui = new GuiTexture(loader.loadTexture("supersaist"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
 	    
+	    //CHECK TEXTMASTER IN FONTRENDERING IF YOU HAVE NOTHING TO DO
 	    
 	    //REFRACTION: below the water
 	    //REFLECTION: above the water, camera needs to be moved under the water to create this effect
@@ -184,15 +194,19 @@ public class Main {
 			
 	    	//render the water tiles
 	    	waterRenderer.render(waters, camera, sun);
-			
+	    	
 			guiRenderer.render(guis);
 			
 			normalMapEntities.get(0).increaseRotation(0, 1, 0);
+			
+			//text render goes last because want to render on top of everything else
+			TextMaster.render();
 			
 			//clear the framebuffer's color buffer and depth buffer
 			DisplayManager.updateDisplay();
 		}
 		
+	    TextMaster.cleanUp();
 	    buffers.cleanUp();
 	    waterShader.cleanUp();
 	    guiRenderer.cleanUp();

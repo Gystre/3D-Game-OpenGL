@@ -30,6 +30,7 @@ public class Loader {
 	private List<Integer> vbos = new ArrayList<Integer>();
 	private List<Integer> textures = new ArrayList<Integer>();
 	
+	//generic object
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
@@ -41,6 +42,7 @@ public class Loader {
 		return new RawModel(vaoID, indices.length);
 	}
 	
+	//normal mapped objects
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, float[] tangents, int[] indices) {
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
@@ -51,6 +53,16 @@ public class Loader {
 		unbindVAO();
 		
 		return new RawModel(vaoID, indices.length);
+	}
+	
+	//text objects (2d quads)
+	public int loadToVAO(float[] positions, float[] textureCoords) {
+		int vaoID = createVAO();
+		storeDataInAttributeList(0, 2, positions); //2d vector pos
+		storeDataInAttributeList(1, 2, textureCoords); //2d texture coords
+		unbindVAO();
+		
+		return vaoID;
 	}
 	
 	public RawModel loadToVAO(ModelData data) {
@@ -68,6 +80,8 @@ public class Loader {
 		return new RawModel(vaoID, positions.length/dimensions); //each vertex position is x and y so divide by two
 	}
 	
+	//for textures
+	//texture bias of -0.4f to make normal maps sharper
 	public int loadTexture(String filename) {
 		Texture texture = null;
 		try {
@@ -77,6 +91,28 @@ public class Loader {
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
 			//level of detail bias
 			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.4f);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		int textureID = texture.getTextureID();
+		textures.add(textureID);
+		
+		return textureID;
+	}
+	
+	//for font atlases
+	public int loadFontAtlasTexture(String filename) {
+		Texture texture = null;
+		try {
+			texture = TextureLoader.getTexture("PNG", new FileInputStream("./assets/"+ filename + ".png"));
+			
+			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
+			//level of detail bias
+			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, 0);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
