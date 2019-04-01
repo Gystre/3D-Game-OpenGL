@@ -7,6 +7,31 @@ out vec4 out_Color;
 uniform vec3 color;
 uniform sampler2D fontAtlas;
 
+//larger font size: higher width, smaller edge
+//make these changes in 0.01 increments
+const float width = 0.5; //distance from middle of character to the edge * 2
+const float edge = 0.1; //width of edge transition (anti aliased)
+
+//hard border: higher width, lower edge
+//glow: lower width, higher edge
+const float borderWidth = 0.1;
+const float borderEdge = 0.7; //make sure to keep this non zero
+ 
+//drop shadow
+//creates artifacts but can be fixed by using smaller offset or more padding in hiero
+const vec2 offset = vec2(0.006, 0.006);
+
+const vec3 outlineColor = vec3(1.0, 0.0, 0.0); //color of outline
+
 void main(void){
-	out_Color = vec4(color, texture(fontAtlas, pass_textureCoords).a);
+	float distance = 1.0 - texture(fontAtlas, pass_textureCoords).a;
+	float alpha = 1.0 - smoothstep(width, width + edge, distance);
+	
+	float distance2 = 1.0 - texture(fontAtlas, pass_textureCoords + offset).a;
+	float outlineAlpha = 1.0 - smoothstep(borderWidth, borderWidth + borderEdge, distance2);
+
+	float overallAlpha = alpha + (1.0 - alpha) * outlineAlpha;
+	vec3 overallColor = mix(outlineColor, color, alpha / overallAlpha);
+
+	out_Color = vec4(overallColor, overallAlpha);
 }

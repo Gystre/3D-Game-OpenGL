@@ -44,9 +44,9 @@ public class Main {
 		TextMaster.init(loader);
 		
 		//apparently my yugothicUI font no work :(
-		FontType font = new FontType(loader.loadFontAtlasTexture("segoeUI"), new File("assets/segoeUI.fnt"));
-		GUIText text = new GUIText("test text babyyyy", 1, font , new Vector2f(0, 0), 1f, true);
-		text.setColor(1, 0, 0);
+		FontType font = new FontType(loader.loadFontAtlasTexture("candara"), new File("assets/candara.fnt"));
+		GUIText text = new GUIText("test text babyyyy", 3, font , new Vector2f(0f, 0.4f), 1f, true);
+		text.setColor(0, 1, 0);
 		
 		Random random = new Random(System.nanoTime());
 		
