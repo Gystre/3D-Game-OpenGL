@@ -25,7 +25,11 @@ public class GUIText {
 	//line lenght of 0.5 = half width of screen
 	private float lineMaxSize; //how long line of text can be before wrapping to next line, basically width of text mesh quad
 	private int numberOfLines; //number of lines text wraps 
-
+	private Vector2f borderInfo;
+	private Vector2f dropInfo;
+	private Vector3f outlineColor;
+	
+	
 	private FontType font;
 
 	private boolean centerText = false;
@@ -56,13 +60,16 @@ public class GUIText {
 	 *            - whether the text should be centered or not.
 	 */
 	public GUIText(String text, float fontSize, FontType font, Vector2f position, float maxLineLength,
-			boolean centered) {
+			boolean centered, Vector2f borderInfo, Vector2f dropInfo, Vector3f outlineColor) {
 		this.textString = text;
 		this.fontSize = fontSize;
 		this.font = font;
 		this.position = position;
 		this.lineMaxSize = maxLineLength;
 		this.centerText = centered;
+		this.borderInfo = borderInfo;
+		this.dropInfo = dropInfo;
+		this.outlineColor = outlineColor;
 
 		TextMaster.loadText(this);
 	}
@@ -186,5 +193,31 @@ public class GUIText {
 	protected String getTextString() {
 		return textString;
 	}
+
+	public Vector2f getBorderInfo() {
+		return borderInfo;
+	}
+
+	public void setBorderInfo(Vector2f borderInfo) {
+		this.borderInfo = borderInfo;
+	}
+
+	public Vector2f getDropInfo() {
+		return dropInfo;
+	}
+
+	public void setDropInfo(Vector2f dropInfo) {
+		this.dropInfo = dropInfo;
+	}
+
+	public Vector3f getOutlineColor() {
+		return outlineColor;
+	}
+
+	public void setOutlineColor(Vector3f outlineColor) {
+		this.outlineColor = outlineColor;
+	}
+	
+	
 
 }

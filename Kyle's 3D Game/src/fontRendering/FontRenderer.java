@@ -56,6 +56,10 @@ public class FontRenderer {
 		//load up them uniform variables
 		shader.loadColor(text.getColor());
 		shader.loadTranslation(text.getPosition());
+		shader.loadBorderInfo(text.getBorderInfo());
+		shader.loadDropInfo(text.getDropInfo());
+		shader.loadOutlineColor(text.getOutlineColor());
+		
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount()); //draw trianges, start at first vertext, and draw vertex count number of vertices 
 		
 		GL20.glDisableVertexAttribArray(0);
