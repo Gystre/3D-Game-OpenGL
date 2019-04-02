@@ -47,10 +47,10 @@ public class Main {
 		//some notes on fonts:
 		//hard border: higher width, lower edge
 		//glow: lower width, higher edge
-		//make sure to keep this non zero
+		//keep border edge non zero
 		//drop shadow creates artifacts but can be fixed by using smaller offset or more padding in hiero
 		FontType font = new FontType(loader.loadFontAtlasTexture("candara"), new File("assets/candara.fnt"));
-		GUIText text = new GUIText("test text babyyyy", 3, font , new Vector2f(0, 0.4f), 1f, true, new Vector2f(0.1f, 0.7f), new Vector2f(0.006f, 0.006f), new Vector3f(0, 0, 0));
+		GUIText text = new GUIText("test text babyyyy", 3, font , new Vector2f(0f, 0.4f), 1f, true, new Vector2f(0.1f, 0.5f), new Vector2f(0.006f, 0.006f), new Vector3f(1f, 0, 0f));
 		text.setColor(0, 1, 0);
 		
 		Random random = new Random(System.nanoTime());
@@ -71,7 +71,7 @@ public class Main {
 	    
 	    //diffuse lighting is where brightness of object's surface depends on it faces the light
 	    List<Light> lights = new ArrayList<Light>();
-	    Light sun = new Light(new Vector3f(100, 1000, 1000), new Vector3f(255f, 255f, 255f), new Vector3f(1, 0.1f, 0.1f));
+	    Light sun = new Light(new Vector3f(0, 1000, 1000), new Vector3f(255f, 255f, 255f), new Vector3f(1, 0.1f, 0.1f));
 	    lights.add(sun); //sun
 	    Light redLight = new Light(new Vector3f(185, 3f, 293), new Vector3f(2, 0, 0), new Vector3f(1, 0.01f, 0.002f));
 	    lights.add(redLight);
@@ -132,8 +132,8 @@ public class Main {
 	    	
 	    }
 	    
-	    //NORMALMAPPED ENTITIES
-	    //load with normal mapped obj loader because it calculates tangents of normal vectors, i think
+	    //NORMALMAPED ENTITIES
+	    //load with normalmappedobjloader because it calculates tangents of normal vectors, i think
 	    TexturedModel barrelModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel/barrel", loader), new ModelTexture(loader.loadTexture("models/barrel/barrel")));
 	    barrelModel.getTexture().setShineDamper(10);
 	    barrelModel.getTexture().setReflectivity(0.5f);

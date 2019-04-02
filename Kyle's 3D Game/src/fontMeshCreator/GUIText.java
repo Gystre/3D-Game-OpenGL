@@ -24,12 +24,11 @@ public class GUIText {
 	//line length of 1 = width of screen
 	//line lenght of 0.5 = half width of screen
 	private float lineMaxSize; //how long line of text can be before wrapping to next line, basically width of text mesh quad
-	private int numberOfLines; //number of lines text wraps 
+	private int numberOfLines; //number of lines text wraps
 	private Vector2f borderInfo;
 	private Vector2f dropInfo;
 	private Vector3f outlineColor;
-	
-	
+
 	private FontType font;
 
 	private boolean centerText = false;
@@ -60,6 +59,21 @@ public class GUIText {
 	 *            - whether the text should be centered or not.
 	 */
 	public GUIText(String text, float fontSize, FontType font, Vector2f position, float maxLineLength,
+			boolean centered) {
+		this.textString = text;
+		this.fontSize = fontSize;
+		this.font = font;
+		this.position = position;
+		this.lineMaxSize = maxLineLength;
+		this.centerText = centered;
+		this.borderInfo = new Vector2f(0, 0.4f);
+		this.dropInfo = new Vector2f(0, 0);
+		this.outlineColor = new Vector3f(0, 0, 0);
+
+		TextMaster.loadText(this);
+	}
+	
+	public GUIText(String text, float fontSize, FontType font, Vector2f position, float maxLineLength,
 			boolean centered, Vector2f borderInfo, Vector2f dropInfo, Vector3f outlineColor) {
 		this.textString = text;
 		this.fontSize = fontSize;
@@ -73,6 +87,7 @@ public class GUIText {
 
 		TextMaster.loadText(this);
 	}
+	
 
 	/**
 	 * Remove the text from the screen.

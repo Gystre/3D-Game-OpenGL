@@ -14,6 +14,9 @@ uniform vec3 outlineColor; //color of outline
 //make these changes in 0.01 increments
 const float width = 0.5; //distance from middle of character to the edge * 2
 const float edge = 0.1; //width of edge transition (anti aliased)
+ 
+//drop shadow
+//creates artifacts but can be fixed by using smaller offset or more padding in hiero
 
 void main(void){
 	float distance = 1.0 - texture(fontAtlas, pass_textureCoords).a;
