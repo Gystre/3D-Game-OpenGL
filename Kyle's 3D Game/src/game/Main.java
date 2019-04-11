@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -16,6 +18,7 @@ import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Player;
+import entities.Projectile;
 import fontMeshCreator.FontType;
 import fontMeshCreator.GUIText;
 import fontRendering.TextMaster;
@@ -39,6 +42,8 @@ import water.WaterTile;
 public class Main {
 	
 	public static void main(String[] args) {
+		final float MAX_DISTANCE = 1000;
+		
 		DisplayManager.createDisplay();
 		Loader loader = new Loader();
 		TextMaster.init(loader);
@@ -52,6 +57,8 @@ public class Main {
 		FontType font = new FontType(loader.loadFontAtlasTexture("candara"), new File("assets/candara.fnt"));
 		GUIText text = new GUIText("test", 3, font , new Vector2f(0f, 0.4f), 1f, true, new Vector2f(0.1f, 0.5f), new Vector2f(0.006f, 0.006f), new Vector3f(1f, 0, 0f));
 		text.setColor(0, 1, 0);
+		
+		List<Projectile> bulletList = new ArrayList<Projectile>();
 		
 		Random random = new Random(System.nanoTime());
 		
@@ -118,7 +125,7 @@ public class Main {
 		    grass.getTexture().setHasTransparency(true);
 		    grass.getTexture().setUseFakeLighting(true);
 	    	
-	    	entities.add(new Entity(grass, new Vector3f(x, y, z),0,0,0,0.9f));
+	    	entities.add(new Entity(grass, new Vector3f(x, y, z),0,0,0,2.5f));
 	    }
 	    
 	    for(int i = 0; i < 50; i++) {
@@ -128,7 +135,7 @@ public class Main {
 	    	
 	    	TexturedModel fern = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("fern/fern")), fernAtlas);
 	    	
-	    	entities.add(new Entity(fern, random.nextInt(4),new Vector3f(x, y, z),0,0,0,1));
+	    	entities.add(new Entity(fern, random.nextInt(4),new Vector3f(x, y, z),0,0,0,1.5f));
 	    	
 	    }
 	    
@@ -162,10 +169,25 @@ public class Main {
 	    //REFRACTION: below the water
 	    //REFLECTION: above the water, camera needs to be moved under the water to create this effect
 	    
+	    
+	    //NOTE: remember to render objects three times because of water (damned water)
 	    while(!Display.isCloseRequested()) {
 	    	//take in keyboard inputs
 	    	player.move(world);
 			camera.move();
+			
+			if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+				Projectile bullet = new Projectile(lampModel, new Vector3f(player.getPosition()), 0, player.getrY(), 0, 1f);
+				bulletList.add(bullet);
+			}
+			
+			for(int i = bulletList.size()-1; i >= 0; i--) {
+				bulletList.get(i).move();
+				
+				if(bulletList.get(i).getDistanceTraveled() > MAX_DISTANCE) {
+					bulletList.remove(i);
+				}
+			}
 			
 			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 			
@@ -184,6 +206,9 @@ public class Main {
 			camera.getPosition().y -= distanceToMoveCamera;
 			camera.invertPitch();
 			renderer.renderScene(entities, normalMapEntities, world, lights, camera, new Vector4f(0, 1, 0, -waterTile.getHeight() + 1f)); //0,1,0 horizontal plane pointing upwards
+			for(Projectile bullet : bulletList) {
+				renderer.processEntity(bullet);
+			}
 			camera.getPosition().y += distanceToMoveCamera;
 			camera.invertPitch();
 			
@@ -191,11 +216,17 @@ public class Main {
 			buffers.bindRefractionFrameBuffer();
 			//-1 is horizontal plane pointing downwards and 15 is everything above that number will get culled
 			renderer.renderScene(entities, normalMapEntities, world, lights, camera, new Vector4f(0, -1, 0, waterTile.getHeight()));
+			for(Projectile bullet : bulletList) {
+				renderer.processEntity(bullet);
+			}
 			
 			//switch back to main framebuffer
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 			buffers.unbindCurrentFrameBuffer();
 			renderer.renderScene(entities, normalMapEntities, world, lights, camera, new Vector4f(0, 0, 0, 0)); //made all zero to make dot product zero thus nothing gets culled
+			for(Projectile bullet : bulletList) {
+				renderer.processEntity(bullet);
+			}
 			
 	    	//render the water tiles
 	    	waterRenderer.render(waters, camera, sun);

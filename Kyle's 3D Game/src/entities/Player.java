@@ -10,7 +10,7 @@ import render.DisplayManager;
 import terrains.Terrain;
 
 public class Player extends Entity{
-	private static final float RUN_ACCELERATION = 50; //units per second
+	private static final float RUN_ACCELERATION = 60; //units per second
 	private static final float TURN_SPEED = 150; //degrees per second
 	private static final float GRAVITY = -20;
 	private static final float JUMP_POWER = 10;
@@ -32,6 +32,7 @@ public class Player extends Entity{
 		super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
 		
 		//woah dude trigonometry
+		//calculate how much to move the camera and player based on currentSpeed and current rotation
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
 		float dx = (float) (distance * Math.sin(Math.toRadians(super.getrY())));
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getrY())));
@@ -54,13 +55,9 @@ public class Player extends Entity{
 		float height = 0;
 		
 		for(Terrain terrain : world) {
-			if(terrain.getX() <= this.getPosition().x) {
-				if(terrain.getX() + terrain.getSize() > this.getPosition().x) {
-					if(terrain.getZ() <= this.getPosition().z) {
-						if(terrain.getZ() + terrain.getSize() > this.getPosition().z) {
-							height = terrain.getHeightOfTerrain(this.getPosition().x, this.getPosition().z);
-						}
-					}
+			if(terrain.getX() <= this.getPosition().x && terrain.getX() + terrain.getSize() > this.getPosition().x) {
+				if(terrain.getZ() <= this.getPosition().z && terrain.getZ() + terrain.getSize() > this.getPosition().z) {
+					height = terrain.getHeightOfTerrain(this.getPosition().x, this.getPosition().z);
 				}
 			}
 		}
@@ -68,12 +65,13 @@ public class Player extends Entity{
 		return height;
 	}
 	
-	private void checkInputs() {		
-		//try currentspeed = velocity + (player acceleration * delta time)
+	private void checkInputs() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
+			//if player reaches max speed, keep them that way
 			if(currentSpeed > RUN_ACCELERATION) {
 				this.currentSpeed = RUN_ACCELERATION;
 			}else {
+				//otherwise increase speed
 				this.currentSpeed += RUN_ACCELERATION * DisplayManager.getFrameTimeSeconds();
 			}
 		}else if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
@@ -83,6 +81,7 @@ public class Player extends Entity{
 				this.currentSpeed -= RUN_ACCELERATION * DisplayManager.getFrameTimeSeconds();
 			}
 		}else {
+			//release keys stop em cold
 			currentSpeed = 0;
 		}
 		

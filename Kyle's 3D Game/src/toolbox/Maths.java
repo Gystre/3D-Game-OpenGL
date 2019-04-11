@@ -18,7 +18,8 @@ public class Maths {
 		return matrix;
 	}
 	
-	//takes in 3d positin of triangle and position of player
+	//takes in 3d position of triangle and position of player and find the center of it
+	//used for calculating current polygon height of terrain
 	public static float barryCentric(Vector3f p1, Vector3f p2, Vector3f p3, Vector2f pos) {
 		float det = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z);
 		float l1 = ((p2.z - p3.z) * (pos.x - p3.x) + (p3.x - p2.x) * (pos.y - p3.z)) / det;
