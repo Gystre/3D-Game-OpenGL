@@ -1,0 +1,32 @@
+#version 330
+
+in vec2 pass_textureCoords;
+
+out vec4 out_Color;
+
+uniform vec3 color;
+uniform sampler2D fontAtlas;
+uniform vec2 borderInfo; //x = width, y = edge
+uniform vec2 dropInfo;
+uniform vec3 outlineColor; //color of outline
+
+//larger font size: higher width, smaller edge
+//make these changes in 0.01 increments
+const float width = 0.5; //distance from middle of character to the edge * 2
+const float edge = 0.1; //width of edge transition (anti aliased)
+ 
+//drop shadow
+//creates artifacts but can be fixed by using smaller offset or more padding in hiero
+
+void main(void){
+	float distance = 1.0 - texture(fontAtlas, pass_textureCoords).a;
+	float alpha = 1.0 - smoothstep(width, width + edge, distance);
+	
+	float distance2 = 1.0 - texture(fontAtlas, pass_textureCoords + dropInfo).a;
+	float outlineAlpha = 1.0 - smoothstep(borderInfo.x, borderInfo.x + borderInfo.y, distance2);
+
+	float overallAlpha = alpha + (1.0 - alpha) * outlineAlpha;
+	vec3 overallColor = mix(outlineColor, color, alpha / overallAlpha);
+
+	out_Color = vec4(overallColor, overallAlpha);
+}

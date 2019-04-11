@@ -10,7 +10,7 @@ import render.DisplayManager;
 import terrains.Terrain;
 
 public class Player extends Entity{
-	private static final float RUN_SPEED = 50; //units per second
+	private static final float RUN_ACCELERATION = 50; //units per second
 	private static final float TURN_SPEED = 150; //degrees per second
 	private static final float GRAVITY = -20;
 	private static final float JUMP_POWER = 10;
@@ -50,13 +50,6 @@ public class Player extends Entity{
 		}
 	}
 	
-	private void jump() {
-		if(!inAir) {
-			this.upwardsSpeed = JUMP_POWER;
-			inAir = true;
-		}	
-	}
-	
 	private float getTerrainHeight(List<Terrain> world) {
 		float height = 0;
 		
@@ -75,13 +68,22 @@ public class Player extends Entity{
 		return height;
 	}
 	
-	private void checkInputs() {
+	private void checkInputs() {		
+		//try currentspeed = velocity + (player acceleration * delta time)
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			this.currentSpeed = RUN_SPEED;
+			if(currentSpeed > RUN_ACCELERATION) {
+				this.currentSpeed = RUN_ACCELERATION;
+			}else {
+				this.currentSpeed += RUN_ACCELERATION * DisplayManager.getFrameTimeSeconds();
+			}
 		}else if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			this.currentSpeed = -RUN_SPEED;
+			if(currentSpeed < -RUN_ACCELERATION) {
+				this.currentSpeed = -RUN_ACCELERATION;
+			}else {
+				this.currentSpeed -= RUN_ACCELERATION * DisplayManager.getFrameTimeSeconds();
+			}
 		}else {
-			this.currentSpeed = 0;
+			currentSpeed = 0;
 		}
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
@@ -93,7 +95,10 @@ public class Player extends Entity{
 		}
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-			jump();
+			if(!inAir) {
+				this.upwardsSpeed = JUMP_POWER;
+				inAir = true;
+			}
 		}
 	}
 }

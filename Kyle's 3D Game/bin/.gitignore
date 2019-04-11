@@ -1,16 +1,2 @@
 /entities/
-/fontMeshCreator/
-/fontRendering/
 /game/
-/guis/
-/models/
-/normalMappingObjConverter/
-/normalMappingRenderer/
-/objConverter/
-/render/
-/shaders/
-/skybox/
-/terrains/
-/textures/
-/toolbox/
-/water/

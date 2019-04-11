@@ -50,7 +50,7 @@ public class Main {
 		//keep border edge non zero
 		//drop shadow creates artifacts but can be fixed by using smaller offset or more padding in hiero
 		FontType font = new FontType(loader.loadFontAtlasTexture("candara"), new File("assets/candara.fnt"));
-		GUIText text = new GUIText("test text babyyyy", 3, font , new Vector2f(0f, 0.4f), 1f, true, new Vector2f(0.1f, 0.5f), new Vector2f(0.006f, 0.006f), new Vector3f(1f, 0, 0f));
+		GUIText text = new GUIText("test", 3, font , new Vector2f(0f, 0.4f), 1f, true, new Vector2f(0.1f, 0.5f), new Vector2f(0.006f, 0.006f), new Vector3f(1f, 0, 0f));
 		text.setColor(0, 1, 0);
 		
 		Random random = new Random(System.nanoTime());
