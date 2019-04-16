@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -14,6 +13,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import collision.AABB;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -168,9 +168,8 @@ public class Main {
 	    
 	    //REFRACTION: below the water
 	    //REFLECTION: above the water, camera needs to be moved under the water to create this effect
-	    
-	    
-	    //NOTE: remember to render objects three times because of water (damned water)
+		 
+		//NOTE: remember to render objects three times because of water (damned water)
 	    while(!Display.isCloseRequested()) {
 	    	//take in keyboard inputs
 	    	player.move(world);
