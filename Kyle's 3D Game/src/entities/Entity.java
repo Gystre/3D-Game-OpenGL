@@ -2,7 +2,9 @@ package entities;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import collision.AABB;
 import models.TexturedModel;
+import toolbox.Maths;
 
 public class Entity {
 	//instance of textured model
@@ -14,13 +16,19 @@ public class Entity {
 	//index of texture in atlas
 	private int textureIndex = 0;
 	
-	public Entity(TexturedModel model, Vector3f position, float rX, float rY, float rZ, float scale) {
+	private AABB hitbox;
+	
+	public Entity(TexturedModel model, AABB hitbox, Vector3f position, float rX, float rY, float rZ, float scale) {
 		this.model = model;
 		this.position = position;
 		this.rX = rX;
 		this.rY = rY;
 		this.rZ = rZ;
 		this.scale = scale;
+		this.hitbox = hitbox;
+		
+		this.hitbox.setMin_extents(Maths.mulVec(hitbox.getSizeMin(), position));
+		this.hitbox.setMax_extents(Maths.mulVec(hitbox.getSizeMax(), position));
 	}
 	
 	public Entity(TexturedModel model, int index, Vector3f position, float rX, float rY, float rZ, float scale) {
@@ -47,12 +55,19 @@ public class Entity {
 		this.position.x += dx;
 		this.position.y += dy;
 		this.position.z += dz;
+		
+		//update the hitbox's postion
+		this.hitbox.setMin_extents(Maths.mulVec(hitbox.getSizeMin(), position));
+		this.hitbox.setMax_extents(Maths.mulVec(hitbox.getSizeMax(), position));
 	}
 	
 	public void increaseRotation(float dx, float dy, float dz) {
 		this.rX += dx;
 		this.rY += dy;
 		this.rZ += dz;
+		
+		this.hitbox.setMin_extents(Maths.mulVec(hitbox.getSizeMin(), position));
+		this.hitbox.setMax_extents(Maths.mulVec(hitbox.getSizeMax(), position));
 	}
 
 	public TexturedModel getModel() {
@@ -102,6 +117,9 @@ public class Entity {
 	public void setScale(float scale) {
 		this.scale = scale;
 	}
-	
+
+	public AABB getHitbox() {
+		return hitbox;
+	}
 	
 }

@@ -61,4 +61,14 @@ public class Maths {
 		
 		return viewMatrix;
 	}
+	
+	public static Vector3f mulVec(Vector3f vec1, Vector3f vec2) {
+		return new Vector3f(vec1.x * vec2.x, vec1.y * vec2.y, vec1.z * vec2.z);
+	}
+	
+	public static void absVec(Vector3f vec) {
+		vec.x = Math.abs(vec.x);
+		vec.y = Math.abs(vec.y);
+		vec.z = Math.abs(vec.z);
+	}
 }

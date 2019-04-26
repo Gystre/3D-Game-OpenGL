@@ -3,9 +3,9 @@ package entities;
 import java.util.List;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
+import collision.AABB;
 import models.TexturedModel;
 import render.DisplayManager;
 import terrains.Terrain;
@@ -22,8 +22,8 @@ public class Player extends Entity{
 
 	private boolean inAir = false;
 	
-	public Player(TexturedModel model, Vector3f position, float rX, float rY, float rZ, float scale) {
-		super(model, position, rX, rY, rZ, scale);
+	public Player(TexturedModel model, AABB hitbox, Vector3f position, float rX, float rY, float rZ, float scale) {
+		super(model, hitbox, position, rX, rY, rZ, scale);
 	}
 	
 	public void move(List<Terrain> world) {
@@ -101,4 +101,6 @@ public class Player extends Entity{
 			}
 		}
 	}
+	
+	
 }
