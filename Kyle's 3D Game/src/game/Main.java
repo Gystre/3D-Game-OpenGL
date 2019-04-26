@@ -111,29 +111,28 @@ public class Main {
 	    Camera camera = new Camera(player);
 	    entities.add(player);
 	    
-	    ModelTexture fernAtlas = new ModelTexture(loader.loadTexture("models/fern/fern"));
-	    fernAtlas.setNumberOfRows(2);
-	    
 	    ModelTexture standing_grass = new ModelTexture(loader.loadTexture("models/standing_grass/standing_grass"));
+	    TexturedModel grass = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("standing_grass/grassModel")), standing_grass);
 	    
 	    for(int i = 0; i < 100; i++) {
 	    	float x = (float)(Math.random() * 1600);
 	    	float z = (float)(Math.random() * 1600);
 	    	float y = chunk00.getHeightOfTerrain(x, z);
 	    	
-	    	TexturedModel grass = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("standing_grass/grassModel")), standing_grass);
 		    grass.getTexture().setHasTransparency(true);
 		    grass.getTexture().setUseFakeLighting(true);
 	    	
 	    	entities.add(new Entity(grass, new Vector3f(x, y, z),0,0,0,2.5f));
 	    }
 	    
+	    ModelTexture fernAtlas = new ModelTexture(loader.loadTexture("models/fern/fern"));
+	    fernAtlas.setNumberOfRows(2);
+	    TexturedModel fern = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("fern/fern")), fernAtlas);
+	    
 	    for(int i = 0; i < 50; i++) {
 	    	float x = (float)(Math.random() * 400);
     		float z = (float)(Math.random() * 400);
 	    	float y = chunk00.getHeightOfTerrain(x, z);
-	    	
-	    	TexturedModel fern = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("fern/fern")), fernAtlas);
 	    	
 	    	entities.add(new Entity(fern, random.nextInt(4),new Vector3f(x, y, z),0,0,0,1.5f));
 	    	

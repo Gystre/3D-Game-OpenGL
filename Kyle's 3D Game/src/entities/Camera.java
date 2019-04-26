@@ -53,20 +53,16 @@ public class Camera {
 	}
 	
 	private void calculatePitch() {
-		if(Mouse.isButtonDown(0)) {
-			float pitchChange = Mouse.getDY() * 0.15f;
-			pitch -= pitchChange;
-			
-			if(pitch > 85) pitch = 85;
-			if(pitch < 1) pitch = 1;
-		}
+		float pitchChange = Mouse.getDY() * 0.13f;
+		pitch -= pitchChange;
+		
+		if(pitch > 85) pitch = 85;
+		if(pitch < 1) pitch = 1;
 	}
 	
 	private void calculateAngleAroundPlayer() {
-		if(Mouse.isButtonDown(0)) {
-			float angleChange = Mouse.getDX() * 0.15f;
-			angleAroundPlayer -= angleChange;
-		}
+		float angleChange = Mouse.getDX() * 0.13f;
+		angleAroundPlayer -= angleChange;
 	}
 	
 	public Vector3f getPosition() {
