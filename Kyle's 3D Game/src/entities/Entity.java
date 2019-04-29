@@ -27,8 +27,7 @@ public class Entity {
 		this.scale = scale;
 		this.hitbox = hitbox;
 		
-		this.hitbox.setMin_extents(Maths.mulVec(hitbox.getSizeMin(), position));
-		this.hitbox.setMax_extents(Maths.mulVec(hitbox.getSizeMax(), position));
+		this.hitbox.translate(this);
 	}
 	
 	public Entity(TexturedModel model, int index, Vector3f position, float rX, float rY, float rZ, float scale) {
@@ -57,8 +56,7 @@ public class Entity {
 		this.position.z += dz;
 		
 		//update the hitbox's postion
-		this.hitbox.setMin_extents(Maths.mulVec(hitbox.getSizeMin(), position));
-		this.hitbox.setMax_extents(Maths.mulVec(hitbox.getSizeMax(), position));
+		this.hitbox.translate(this);
 	}
 	
 	public void increaseRotation(float dx, float dy, float dz) {
@@ -66,8 +64,7 @@ public class Entity {
 		this.rY += dy;
 		this.rZ += dz;
 		
-		this.hitbox.setMin_extents(Maths.mulVec(hitbox.getSizeMin(), position));
-		this.hitbox.setMax_extents(Maths.mulVec(hitbox.getSizeMax(), position));
+		this.hitbox.translate(this);
 	}
 
 	public TexturedModel getModel() {

@@ -2,75 +2,65 @@ package collision;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import entities.Entity;
 import toolbox.Maths;
 
 public class AABB {
 	/*
-	so the basic gist of this is BOXES WOOHOO
-	cube made of 8 vertices
-	ex.
-	front top left vertex of the box is (minX, maxY, minZ)
-	back right bottom vertex is (maxX, minY, maxZ)
+	 * this AABB class is based on https://github.com/chrisdickinson/aabb-3d/blob/master/index.js
+	 * adapted to java of course
 	 */
 	
-	//the "cold" or non-changing
-	private Vector3f sizeMin;
-	private Vector3f sizeMax;
+	/*
+		   x0/y1/z1---x1/y1/z1
+	depth->  /           /|
+	        /           / |
+	    x0/y1/z0 -- x1/y1/z0
+	      |           |   |
+	      |           | <-- height
+	      |           |  /
+	      |           | /
+	   x0/y0/z0 ----- x1/y0/z0
+	            ^
+	            |
+	          width
+	 */
 	
-	//the "hot" or changing
 	private Vector3f min_extents;
 	private Vector3f max_extents;
 	
-	public AABB(Vector3f min, Vector3f max) {
-		this.min_extents = min;
-		this.max_extents = max;
-		
-		this.sizeMin = min;
-		this.sizeMax = max;
-	}
+	private Vector3f pos; //pos is front bottom left corner
+	private Vector3f whd;
 	
-	private float max(Vector3f vec) {
-		float big = vec.getX();
+	private Vector3f pos2; //???
+	
+	public AABB(Vector3f pos, Vector3f whd) {
+		this.pos = pos;
+		this.whd = whd;
 		
-		if(vec.getY() > big) {
-			big = vec.getY();
-		}
+		Vector3f.add(this.pos, this.whd, pos2);
 		
-		if(vec.getZ() > big) {
-			big = vec.getZ();
-		}
-		
-		return big;
+		this.min_extents = Maths.minVec(whd, pos2);
+		this.max_extents = Maths.maxVec(whd, pos2);
 	}
 	
 	public boolean isIntersects(AABB box2) {
-		if(box2.getMin_extents().x > this.min_extents.x) return false;
-		if(box2.getMin_extents().y > this.min_extents.y) return false;
-		if(box2.getMin_extents().z > this.min_extents.z) return false;
+		if(box2.getMin_extents().x > min_extents.x) return false;
+		if(box2.getMin_extents().y > min_extents.y) return false;
+		if(box2.getMin_extents().z > min_extents.z) return false;
 		
-		if(box2.getMax_extents().x > this.max_extents.x) return false;
-		if(box2.getMax_extents().y > this.max_extents.y) return false;
-		if(box2.getMax_extents().z > this.max_extents.z) return false;
+		if(box2.getMax_extents().x < max_extents.x) return false;
+		if(box2.getMax_extents().y < max_extents.y) return false;
+		if(box2.getMax_extents().z < max_extents.z) return false;
 		
 		return true;
 	}
 	
-//	public Intersection intersects(AABB box2) {
-//		Vector3f distances1 = new Vector3f();
-//		Vector3f.sub(box2.getMin_extents(), this.getMax_extents(), distances1);
-//		Maths.absVec(distances1);
-//		
-//		Vector3f distances2 = new Vector3f();
-//		Vector3f.sub(this.getMin_extents(), box2.getMax_extents(), distances2);
-//		Maths.absVec(distances2);
-//		
-//		//find the smallest length
-//		Vector3f dist = distances1.length() < distances2.length() ? distances1 : distances2;
-//		float maxDistance = max(dist);
-//		
-//		return new Intersection(maxDistance < 0, Math.abs(maxDistance));
-//	}
 	
+	public void translate(Entity entity) { 
+		min_extents = Maths.addVec(pos, entity.getPosition()); 
+		max_extents = Maths.addVec(pos, entity.getPosition()); }
+	 	
 	public Vector3f getMin_extents() {
 		return min_extents;
 	}
@@ -85,14 +75,6 @@ public class AABB {
 
 	public void setMax_extents(Vector3f max_extents) {
 		this.max_extents = max_extents;
-	}
-	
-	public Vector3f getSizeMin() {
-		return sizeMin;
-	}
-
-	public Vector3f getSizeMax() {
-		return sizeMax;
 	}
 
 

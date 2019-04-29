@@ -99,18 +99,17 @@ public class Main {
 	    List<Entity> normalMapEntities = new ArrayList<Entity>();
 
 	    AABB testBox = new AABB(new Vector3f(-1, -1, -1), new Vector3f(1,1,1));
-	    AABB playerBox = new AABB(new Vector3f(-1,-1,-1), new Vector3f(1,1,1));
 	    
 	    //ENTITIES
 	    TexturedModel asuka = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("asuka_maid/asuka_maid")), new ModelTexture(loader.loadTexture("models/asuka_maid/test")));
 	    asuka.getTexture().setShineDamper(10);
 	    asuka.getTexture().setReflectivity(1);
 	    
-	    Player player = new Player(asuka, playerBox, new Vector3f(185, 0, 293),0,180,0,1);
+	    Player player = new Player(asuka, new AABB(new Vector3f(-1,0,1), new Vector3f(1,4.5f,-1)), new Vector3f(185, 0, 293),0,180,0,1);
 	    Camera camera = new Camera(player);
 	    entities.add(player);
 	    
-	    Entity lampEntity = new Entity(lampModel, testBox, new Vector3f(185, chunk00.getHeightOfTerrain(185, 293), 293),0,0,0,1);
+	    Entity lampEntity = new Entity(lampModel, new AABB(new Vector3f(-1,0,1), new Vector3f(1,4.5f,-1)), new Vector3f(185, chunk00.getHeightOfTerrain(185, 293), 293),0,0,0,1);
 	    entities.add(lampEntity);
 	    entities.add(new Entity(lampModel, testBox, new Vector3f(370, chunk00.getHeightOfTerrain(370, 293), 293),0,0,0,1));
 	    
@@ -147,7 +146,7 @@ public class Main {
 	    barrelModel.getTexture().setShineDamper(10);
 	    barrelModel.getTexture().setReflectivity(0.5f);
 	    barrelModel.getTexture().setNormalMap(loader.loadTexture("models/barrel/barrelNormal"));
-	    normalMapEntities.add(new Entity(barrelModel, testBox, new Vector3f(185, 5, 293),0,0,0,1f));
+	    normalMapEntities.add(new Entity(barrelModel, testBox, new Vector3f(205, 5, 293),0,0,0,1f));
 	    
 	    MasterRenderer renderer = new MasterRenderer(loader);
 	    
@@ -172,13 +171,19 @@ public class Main {
 	    //REFLECTION: above the water, camera needs to be moved under the water to create this effect
 	    
 		//NOTE: remember to render objects three times because of water (damned water)
+		entities.add(new Entity(lampModel, testBox, lampEntity.getHitbox().getMin_extents(),0,0,0,0.05f));
+		entities.add(new Entity(lampModel, testBox, lampEntity.getHitbox().getMax_extents(),0,0,0,0.05f));
+		
+		AABB box1 = new AABB(new Vector3f(0,0,0), new Vector3f(1,1,1));
+		AABB box2 = new AABB(new Vector3f(0,0,0), new Vector3f(1,1,1));
+		System.out.println(box1.isIntersects(box2));
+		
 	    while(!Display.isCloseRequested()) {
 	    	//take in keyboard inputs
 	    	player.move(world);
 			camera.move();
 			
-			System.out.println(player.getHitbox() + "   " + lampEntity.getHitbox());
-			System.out.println(player.getHitbox().isIntersects(lampEntity.getHitbox()));
+			System.out.println(player.getHitbox() + " " + lampEntity.getHitbox());
 			
 			if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
 				Projectile bullet = new Projectile(lampModel, testBox, new Vector3f(player.getPosition()), 0, player.getrY(), 0, 1f);
