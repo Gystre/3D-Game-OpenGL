@@ -33,7 +33,7 @@ public class Player extends Entity{
 		super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
 		
 		//woah dude trigonometry
-		//calculate how much to move the camera and player based on currentSpeed and current rotation
+		//calculate how much to move the camera and player based on currentSpeed and rotation
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
 		float dx = (float) (distance * Math.sin(Math.toRadians(super.getrY())));
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getrY())));
@@ -53,17 +53,15 @@ public class Player extends Entity{
 	}
 	
 	private float getTerrainHeight(List<Terrain> world) {
-		float height = 0;
-		
 		for(Terrain terrain : world) {
 			if(terrain.getX() <= this.getPosition().x && terrain.getX() + terrain.getSize() > this.getPosition().x) {
 				if(terrain.getZ() <= this.getPosition().z && terrain.getZ() + terrain.getSize() > this.getPosition().z) {
-					height = terrain.getHeightOfTerrain(this.getPosition().x, this.getPosition().z);
+					return terrain.getHeightOfTerrain(this.getPosition().x, this.getPosition().z);
 				}
 			}
 		}
 		
-		return height;
+		return 0;
 	}
 	
 	private void checkInputs() {

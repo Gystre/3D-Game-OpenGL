@@ -10,10 +10,10 @@ public class Camera {
 	private Vector3f position = new Vector3f(0, 0, 0);
 	private float pitch = 20; //how high or low
 	private float yaw; //how left or right
-	private float roll; //how much tilt, think of the camera in the middle of a circle
+	private float roll; //how much tilt
 
 	private final static float MAXZOOM = 160;
-	private final static float MINZOOM = 15;
+	private final static float MINZOOM = 10;
 	
 	private Player player;
 	

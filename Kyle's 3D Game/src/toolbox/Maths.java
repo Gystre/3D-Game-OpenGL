@@ -70,18 +70,19 @@ public class Maths {
 	}
 	
 	public static Vector3f minVec(Vector3f vec1, Vector3f vec2) {
-		return new Vector3f(
-				vec1.x < vec2.x ? vec1.x : vec2.x, 
-				vec1.y < vec2.y ? vec1.y : vec2.y, 
-				vec1.z < vec2.z ? vec1.z : vec2.z
-			);
+		Vector3f out = new Vector3f();
+		out.x = Math.min(vec1.x, vec2.x);
+		out.y = Math.min(vec1.y, vec2.y);
+		out.z = Math.min(vec1.z, vec2.z);
+		
+		return out;
 	}
 	
 	public static Vector3f maxVec(Vector3f vec1, Vector3f vec2) {
-		return new Vector3f(
-				vec1.x > vec2.x ? vec1.x : vec2.x, 
-				vec1.y > vec2.y ? vec1.y : vec2.y, 
-				vec1.z > vec2.z ? vec1.z : vec2.z
-			);
+		Vector3f out = new Vector3f();
+		out.x = Math.max(vec1.x, vec2.x);
+		out.y = Math.max(vec1.y, vec2.y);
+		out.z = Math.max(vec1.z, vec2.z);
+		return out;
 	}
 }

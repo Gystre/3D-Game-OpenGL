@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/jars/lwjgl.jar"/>
 	<classpathentry kind="lib" path="lib/jars/slick-util.jar"/>
 	<classpathentry kind="lib" path="lib/jars/PNGDecoder.jar"/>
+	<classpathentry kind="lib" path="lib/jars/j3dcore.jar" sourcepath="lib/jars/org.j3d.core_1.1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

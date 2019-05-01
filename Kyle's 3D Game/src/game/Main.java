@@ -105,7 +105,7 @@ public class Main {
 	    asuka.getTexture().setShineDamper(10);
 	    asuka.getTexture().setReflectivity(1);
 	    
-	    Player player = new Player(asuka, new AABB(new Vector3f(-1,0,1), new Vector3f(1,4.5f,-1)), new Vector3f(185, 0, 293),0,180,0,1);
+	    Player player = new Player(asuka, new AABB(new Vector3f(-1,0,1), new Vector3f(1,4.5f,1)), new Vector3f(185, 0, 293),0,180,0,1);
 	    Camera camera = new Camera(player);
 	    entities.add(player);
 	    
@@ -170,20 +170,25 @@ public class Main {
 	    //REFRACTION: below the water
 	    //REFLECTION: above the water, camera needs to be moved under the water to create this effect
 	    
+	    AABB playerBox = new AABB(new Vector3f(0,0,0), new Vector3f(12,12,12));
+	    AABB lampBox = new AABB(new Vector3f(10,10,10), new Vector3f(2,2,2));
+	    
+	    System.out.println(playerBox.isIntersectss(lampBox));
+	    
 		//NOTE: remember to render objects three times because of water (damned water)
 		entities.add(new Entity(lampModel, testBox, lampEntity.getHitbox().getMin_extents(),0,0,0,0.05f));
 		entities.add(new Entity(lampModel, testBox, lampEntity.getHitbox().getMax_extents(),0,0,0,0.05f));
-		
-		AABB box1 = new AABB(new Vector3f(0,0,0), new Vector3f(1,1,1));
-		AABB box2 = new AABB(new Vector3f(0,0,0), new Vector3f(1,1,1));
-		System.out.println(box1.isIntersects(box2));
 		
 	    while(!Display.isCloseRequested()) {
 	    	//take in keyboard inputs
 	    	player.move(world);
 			camera.move();
 			
-			System.out.println(player.getHitbox() + " " + lampEntity.getHitbox());
+			entities.add(new Entity(lampModel, testBox, player.getHitbox().getMin_extents(),0,0,0,0.05f));
+			entities.add(new Entity(lampModel, testBox, player.getHitbox().getMax_extents(),0,0,0,0.05f));
+			
+			System.out.println(player.getHitbox().isIntersectss(lampEntity.getHitbox()));
+			//System.out.println(player.getHitbox().getMin_extents() + " " + player.getPosition());
 			
 			if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
 				Projectile bullet = new Projectile(lampModel, testBox, new Vector3f(player.getPosition()), 0, player.getrY(), 0, 1f);
