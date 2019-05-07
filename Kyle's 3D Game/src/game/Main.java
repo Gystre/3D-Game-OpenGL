@@ -13,7 +13,8 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import collision.AABB;
+import collision.BSphere;
+import collision.Intersection;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -97,21 +98,21 @@ public class Main {
 	    
 	    List<Entity> entities = new ArrayList<Entity>();
 	    List<Entity> normalMapEntities = new ArrayList<Entity>();
-
-	    AABB testBox = new AABB(new Vector3f(-1, -1, -1), new Vector3f(1,1,1));
 	    
 	    //ENTITIES
+	    BSphere test = new BSphere(new Vector3f(0,0,0), 1);
+	    
 	    TexturedModel asuka = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("asuka_maid/asuka_maid")), new ModelTexture(loader.loadTexture("models/asuka_maid/test")));
 	    asuka.getTexture().setShineDamper(10);
 	    asuka.getTexture().setReflectivity(1);
 	    
-	    Player player = new Player(asuka, new AABB(new Vector3f(-1,0,1), new Vector3f(1,4.5f,1)), new Vector3f(185, 0, 293),0,180,0,1);
+	    Player player = new Player(asuka, new Vector3f(185, 0, 293), new BSphere(new Vector3f(0,0,0), 1),2,0,180,0,1);
 	    Camera camera = new Camera(player);
 	    entities.add(player);
 	    
-	    Entity lampEntity = new Entity(lampModel, new AABB(new Vector3f(-1,0,1), new Vector3f(1,4.5f,-1)), new Vector3f(185, chunk00.getHeightOfTerrain(185, 293), 293),0,0,0,1);
+	    Entity lampEntity = new Entity(lampModel, new Vector3f(185, chunk00.getHeightOfTerrain(185, 293), 293), new BSphere(new Vector3f(0,0,0), 1),2,0,0,0,1);
 	    entities.add(lampEntity);
-	    entities.add(new Entity(lampModel, testBox, new Vector3f(370, chunk00.getHeightOfTerrain(370, 293), 293),0,0,0,1));
+	    entities.add(new Entity(lampModel, new Vector3f(370, chunk00.getHeightOfTerrain(370, 293), 293), test,0,0,0,0,1));
 	    
 	    ModelTexture standing_grass = new ModelTexture(loader.loadTexture("models/standing_grass/standing_grass"));
 	    TexturedModel grass = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("standing_grass/grassModel")), standing_grass);
@@ -124,7 +125,7 @@ public class Main {
 		    grass.getTexture().setHasTransparency(true);
 		    grass.getTexture().setUseFakeLighting(true);
 	    	
-	    	entities.add(new Entity(grass, testBox, new Vector3f(x, y, z),0,0,0,2.5f));
+	    	entities.add(new Entity(grass, new Vector3f(x, y, z), test,0,0,0,0,2.5f));
 	    }
 	    
 	    ModelTexture fernAtlas = new ModelTexture(loader.loadTexture("models/fern/fern"));
@@ -146,7 +147,7 @@ public class Main {
 	    barrelModel.getTexture().setShineDamper(10);
 	    barrelModel.getTexture().setReflectivity(0.5f);
 	    barrelModel.getTexture().setNormalMap(loader.loadTexture("models/barrel/barrelNormal"));
-	    normalMapEntities.add(new Entity(barrelModel, testBox, new Vector3f(205, 5, 293),0,0,0,1f));
+	    normalMapEntities.add(new Entity(barrelModel,  new Vector3f(205, 5, 293), test,0,0,0,0,1f));
 	    
 	    MasterRenderer renderer = new MasterRenderer(loader);
 	    
@@ -170,28 +171,31 @@ public class Main {
 	    //REFRACTION: below the water
 	    //REFLECTION: above the water, camera needs to be moved under the water to create this effect
 	    
-	    AABB playerBox = new AABB(new Vector3f(0,0,0), new Vector3f(12,12,12));
-	    AABB lampBox = new AABB(new Vector3f(10,10,10), new Vector3f(2,2,2));
+//	    CollisionPacket packet;
+//	    
+//	    //plane at z = 5, vel = 5, ellipsoid maxs of 5
+//	    CollisionDetector detector1 = new CollisionDetector(new Vector3f(0,0,0), new Vector3f(0,0,5), new Vector3f(-500,500,5), new Vector3f(500, 500,5), new Vector3f(0,-10000,-5),5,5,5);
+//	    packet = detector1.isCollides();
 	    
-	    System.out.println(playerBox.isIntersectss(lampBox));
+//	    try {
+//	    	System.out.println("collision at: " + packet.getDistance() + "\n type: " + packet.getType());
+//	    }catch(NullPointerException e) {
+//	    	System.out.println("no collision");
+//	    }
 	    
 		//NOTE: remember to render objects three times because of water (damned water)
-		entities.add(new Entity(lampModel, testBox, lampEntity.getHitbox().getMin_extents(),0,0,0,0.05f));
-		entities.add(new Entity(lampModel, testBox, lampEntity.getHitbox().getMax_extents(),0,0,0,0.05f));
-		
 	    while(!Display.isCloseRequested()) {
 	    	//take in keyboard inputs
 	    	player.move(world);
 			camera.move();
 			
-			entities.add(new Entity(lampModel, testBox, player.getHitbox().getMin_extents(),0,0,0,0.05f));
-			entities.add(new Entity(lampModel, testBox, player.getHitbox().getMax_extents(),0,0,0,0.05f));
 			
-			System.out.println(player.getHitbox().isIntersectss(lampEntity.getHitbox()));
-			//System.out.println(player.getHitbox().getMin_extents() + " " + player.getPosition());
+			if(Keyboard.isKeyDown(Keyboard.KEY_Q)) {
+				System.exit(0);
+			}
 			
 			if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-				Projectile bullet = new Projectile(lampModel, testBox, new Vector3f(player.getPosition()), 0, player.getrY(), 0, 1f);
+				Projectile bullet = new Projectile(lampModel, new Vector3f(player.getPosition()), test,0, 0, player.getrY(), 0, 1f);
 				bulletList.add(bullet);
 			}
 			

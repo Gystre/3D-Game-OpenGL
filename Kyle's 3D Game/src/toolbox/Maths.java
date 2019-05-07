@@ -1,5 +1,6 @@
 package toolbox;
 
+import org.lwjgl.util.Point;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -67,6 +68,10 @@ public class Maths {
 	//would put these vec related functions in the source file but not really programming it now am I :P
 	public static Vector3f addVec(Vector3f vec1, Vector3f vec2) {
 		return new Vector3f(vec1.x + vec2.x, vec1.y + vec2.y, vec1.z + vec2.z);
+	}
+	
+	public static Vector3f subVec(Vector3f vec1, Vector3f vec2) {
+		return new Vector3f(vec1.x - vec2.x, vec1.y - vec2.y, vec1.z - vec2.z);
 	}
 	
 	public static Vector3f minVec(Vector3f vec1, Vector3f vec2) {
