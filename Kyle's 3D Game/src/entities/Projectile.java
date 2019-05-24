@@ -2,7 +2,7 @@ package entities;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import collision.BObject;
+import collision.AABB;
 import models.TexturedModel;
 import render.DisplayManager;
 
@@ -10,7 +10,7 @@ public class Projectile extends Entity{
 	private float distanceTraveled = 0;
 	private float currentSpeed = 350;
 
-	public Projectile(TexturedModel model, Vector3f position, BObject hitbox, float h, float rX, float rY, float rZ, float scale) {
+	public Projectile(TexturedModel model, Vector3f position, AABB hitbox, float h, float rX, float rY, float rZ, float scale) {
 		super(model, position, hitbox, h, rX, rY, rZ, scale);
 	}
 	

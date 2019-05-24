@@ -2,7 +2,7 @@ package entities;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import collision.BObject;
+import collision.AABB;
 import models.TexturedModel;
 
 public class Entity {
@@ -13,12 +13,12 @@ public class Entity {
 	private float scale;
 	private float height;
 	
-	BObject hitbox;
+	AABB hitbox;
 	
 	//index of texture in atlas
 	private int textureIndex = 0;
 	
-	public Entity(TexturedModel model, Vector3f position, BObject hitbox, float height, float rX, float rY, float rZ, float scale) {
+	public Entity(TexturedModel model, Vector3f position, AABB hitbox, float height, float rX, float rY, float rZ, float scale) {
 		this.model = model;
 		this.position = position;
 		this.rX = rX;
@@ -28,7 +28,7 @@ public class Entity {
 		this.scale = scale;
 		
 		this.hitbox = hitbox;
-		hitbox.translate(position, height);
+		//hitbox.translate(position, height);
 	}
 	
 	public Entity(TexturedModel model, int index, Vector3f position, float rX, float rY, float rZ, float scale) {
@@ -56,7 +56,7 @@ public class Entity {
 		this.position.y += dy;
 		this.position.z += dz;
 		
-		this.hitbox.translate(position, height);
+		//this.hitbox.translate(position, height);
 	}
 	
 	public void increaseRotation(float dx, float dy, float dz) {
@@ -113,7 +113,7 @@ public class Entity {
 		this.scale = scale;
 	}
 	
-	public BObject getHitbox() {
+	public AABB getHitbox() {
 		return hitbox;
 	}
 	

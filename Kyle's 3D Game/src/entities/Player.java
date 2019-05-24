@@ -5,7 +5,7 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
-import collision.BObject;
+import collision.AABB;
 import models.TexturedModel;
 import render.DisplayManager;
 import terrains.Terrain;
@@ -22,7 +22,7 @@ public class Player extends Entity{
 
 	private boolean inAir = false;
 	
-	public Player(TexturedModel model, Vector3f position, BObject hitbox, float h, float rX, float rY, float rZ, float scale) {
+	public Player(TexturedModel model, Vector3f position, AABB hitbox, float h, float rX, float rY, float rZ, float scale) {
 		super(model, position, hitbox, h, rX, rY, rZ, scale);
 	}
 	

@@ -18,8 +18,8 @@ public class TerrainShader extends ShaderProgram{
 	
 	private static final int MAX_LIGHTS = 4;
 	
-	private static final String VERTEX_FILE = "src/shaders/terrainVertexShader.txt";
-	private static final String FRAGMENT_FILE = "src/shaders/terrainFragmentShader.txt";
+	private static final String VERTEX_FILE = "/shaders/terrainVertexShader.txt";
+	private static final String FRAGMENT_FILE = "/shaders/terrainFragmentShader.txt";
 
 	//transformation matrix: translation(vec3), rotation(vec3), and scale(int)
 	private int location_transformationMatrix;

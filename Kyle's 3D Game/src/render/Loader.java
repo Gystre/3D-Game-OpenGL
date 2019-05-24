@@ -1,8 +1,8 @@
 package render;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -85,7 +85,7 @@ public class Loader {
 	public int loadTexture(String filename) {
 		Texture texture = null;
 		try {
-			texture = TextureLoader.getTexture("PNG", new FileInputStream("./assets/"+ filename + ".png"));
+			texture = TextureLoader.getTexture("PNG", Class.class.getResourceAsStream("/assets/" + filename + ".png"));
 			
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
@@ -107,7 +107,7 @@ public class Loader {
 	public int loadFontAtlasTexture(String filename) {
 		Texture texture = null;
 		try {
-			texture = TextureLoader.getTexture("PNG", new FileInputStream("./assets/"+ filename + ".png"));
+			texture = TextureLoader.getTexture("PNG", Class.class.getResourceAsStream("/assets/" + filename + ".png"));
 			
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
@@ -144,7 +144,7 @@ public class Loader {
 		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texID);
 		
 		for(int i = 0; i < textureFiles.length; i++) {
-			TextureData data = decodeTextureFile("assets/skybox/" + textureFiles[i] + ".png");
+			TextureData data = decodeTextureFile(textureFiles[i]);
 			//add 1 to target so that it will iterate through all 6 faces of the cube
 			GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL11.GL_RGBA, data.getWidth(), data.getHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data.getBuffer());
 		}
@@ -162,7 +162,7 @@ public class Loader {
 		ByteBuffer buffer = null;
 		
 		try {
-			FileInputStream in = new FileInputStream(filename);
+			InputStream in = Class.class.getResourceAsStream("/assets/" + filename + ".png");
 			PNGDecoder decoder = new PNGDecoder(in);
 			width = decoder.getWidth();
 			height = decoder.getHeight();
