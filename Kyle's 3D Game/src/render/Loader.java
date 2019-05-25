@@ -162,7 +162,7 @@ public class Loader {
 		ByteBuffer buffer = null;
 		
 		try {
-			InputStream in = Class.class.getResourceAsStream("/assets/" + filename + ".png");
+			InputStream in = Class.class.getResourceAsStream("/assets/skybox/" + filename + ".png");
 			PNGDecoder decoder = new PNGDecoder(in);
 			width = decoder.getWidth();
 			height = decoder.getHeight();
@@ -172,7 +172,7 @@ public class Loader {
 			in.close();
 		}catch(Exception e) {
 			e.printStackTrace();
-			System.err.println("Failed to load texture " + filename);
+			System.err.println("Failed to load texture: " + filename + ".png");
 			System.exit(-1);
 		}
 		

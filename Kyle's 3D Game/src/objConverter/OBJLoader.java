@@ -15,9 +15,8 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class OBJLoader {
 	public static ModelData loadOBJ(String objFileName) {
-		InputStreamReader isr = new InputStreamReader(Class.class.getResourceAsStream("/assets/" + objFileName + ".obj"));
+		InputStreamReader isr = new InputStreamReader(Class.class.getResourceAsStream("/assets/models/" + objFileName + ".obj"));
 		BufferedReader reader = new BufferedReader(isr);
-		
 		String line;
 		List<Vertex> vertices = new ArrayList<Vertex>();
 		List<Vector2f> textures = new ArrayList<Vector2f>();

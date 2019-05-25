@@ -14,7 +14,7 @@ import render.Loader;
 
 public class NormalMappedObjLoader {
 	public static RawModel loadOBJ(String objFileName, Loader loader) {
-		InputStreamReader isr = new InputStreamReader(Class.class.getResourceAsStream("/assets/" + objFileName + ".obj"));
+		InputStreamReader isr = new InputStreamReader(Class.class.getResourceAsStream("/assets/models/" + objFileName + ".obj"));
 		BufferedReader reader = new BufferedReader(isr);
 		String line;
 		List<VertexNM> vertices = new ArrayList<VertexNM>();

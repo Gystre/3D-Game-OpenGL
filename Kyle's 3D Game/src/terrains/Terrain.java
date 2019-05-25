@@ -3,6 +3,7 @@ package terrains;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 
@@ -38,9 +39,10 @@ public class Terrain {
 	}
 
 	private RawModel generateTerrain(Loader loader, String heightMap){
+		URL url = this.getClass().getResource("/assets/" + heightMap + ".png");		
 		BufferedImage image = null;
 		try {
-			image = ImageIO.read(new File("assets/" + heightMap + ".png"));
+			image = ImageIO.read(url);
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
