@@ -1,9 +1,9 @@
 package toolbox;
 
-import org.lwjgl.util.Point;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import entities.Camera;
 
@@ -89,5 +89,15 @@ public class Maths {
 		out.y = Math.max(vec1.y, vec2.y);
 		out.z = Math.max(vec1.z, vec2.z);
 		return out;
+	}
+	
+	public static Vector3f mulVecAndMat(Matrix4f mat, Vector3f vec) {
+		Vector3f ret = new Vector3f();
+		
+		ret.x = vec.x * mat.m00 + mat.m01 * vec.y + mat.m02 * vec.z + mat.m03 * 1;
+		ret.y = vec.x * mat.m10 + mat.m11 * vec.y + mat.m12 * vec.z + mat.m13 * 1;
+		ret.z = vec.x * mat.m20 + mat.m21 * vec.y + mat.m22 * vec.z + mat.m02 * 1;
+		
+		return ret;
 	}
 }

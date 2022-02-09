@@ -1,6 +1,5 @@
 package game;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -54,7 +53,7 @@ public class Main {
 		//glow: lower width, higher edge
 		//keep border edge non zero
 		//drop shadow creates artifacts but can be fixed by using smaller offset or more padding in hiero
-		FontType font = new FontType(loader.loadFontAtlasTexture("candara"), "candara.fnt");
+		FontType font = new FontType(loader.loadFontAtlasTexture("candara.png"), "candara.fnt");
 		GUIText text = new GUIText("test", 3, font , new Vector2f(0f, 0.4f), 1f, true, new Vector2f(0.1f, 0.5f), new Vector2f(0.006f, 0.006f), new Vector3f(1f, 0, 0f));
 		text.setColor(0, 1, 0);
 		
@@ -105,13 +104,13 @@ public class Main {
 	    asuka.getTexture().setShineDamper(10);
 	    asuka.getTexture().setReflectivity(1);
 	    
-	    Player player = new Player(asuka, new Vector3f(185, 0, 293), new AABB(new Vector3f(0,0,0), new Vector3f(1,1,1)),2,0,180,0,1);
+	    Player player = new Player(asuka, new Vector3f(185, 0, 293), new AABB(new Vector3f(0,0,0), new Vector3f(1,1,1)),0,180,0,1);
 	    Camera camera = new Camera(player);
 	    entities.add(player);
 	    
-	    Entity lampEntity = new Entity(lampModel, new Vector3f(185, chunk00.getHeightOfTerrain(185, 293), 293), testBox,2,0,0,0,1);
+	    Entity lampEntity = new Entity(lampModel, new Vector3f(185, chunk00.getHeightOfTerrain(185, 293), 293), testBox,0,0,0,1);
 	    entities.add(lampEntity);
-	    entities.add(new Entity(lampModel, new Vector3f(370, chunk00.getHeightOfTerrain(370, 293), 293), testBox,0,0,0,0,1));
+	    entities.add(new Entity(lampModel, new Vector3f(370, chunk00.getHeightOfTerrain(370, 293), 293), testBox,0,0,0,1));
 	    
 	    ModelTexture standing_grass = new ModelTexture(loader.loadTexture("models/standing_grass/standing_grass"));
 	    TexturedModel grass = new TexturedModel(loader.loadToVAO(OBJLoader.loadOBJ("standing_grass/grassModel")), standing_grass);
@@ -124,7 +123,7 @@ public class Main {
 		    grass.getTexture().setHasTransparency(true);
 		    grass.getTexture().setUseFakeLighting(true);
 	    	
-	    	entities.add(new Entity(grass, new Vector3f(x, y, z), testBox,0,0,0,0,2.5f));
+	    	entities.add(new Entity(grass, new Vector3f(x, y, z), testBox,0,0,0,2.5f));
 	    }
 	    
 	    ModelTexture fernAtlas = new ModelTexture(loader.loadTexture("models/fern/fern"));
@@ -146,7 +145,7 @@ public class Main {
 	    barrelModel.getTexture().setShineDamper(10);
 	    barrelModel.getTexture().setReflectivity(0.5f);
 	    barrelModel.getTexture().setNormalMap(loader.loadTexture("models/barrel/barrelNormal"));
-	    normalMapEntities.add(new Entity(barrelModel,  new Vector3f(205, 5, 293), testBox,0,0,0,0,1f));
+	    normalMapEntities.add(new Entity(barrelModel,  new Vector3f(205, 5, 293), testBox,0,0,0,1f));
 	    
 	    MasterRenderer renderer = new MasterRenderer(loader);
 	    
@@ -187,6 +186,12 @@ public class Main {
 	    	//take in keyboard inputs
 	    	player.move(world);
 			camera.move();
+			
+			System.out.println(player.getHitbox().min_extents);
+			System.out.println(player.getHitbox().max_extents);
+			
+			entities.add(new Entity(lampModel, new Vector3f(player.getHitbox().min_extents), testBox,0,0,0,0.1f));
+			entities.add(new Entity(lampModel, new Vector3f(player.getHitbox().max_extents), testBox,0,0,0,0.1f));
 			
 			if(Keyboard.isKeyDown(Keyboard.KEY_Q)) {
 				System.exit(0);

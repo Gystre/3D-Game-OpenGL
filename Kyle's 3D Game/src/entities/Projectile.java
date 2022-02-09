@@ -11,7 +11,7 @@ public class Projectile extends Entity{
 	private float currentSpeed = 350;
 
 	public Projectile(TexturedModel model, Vector3f position, AABB hitbox, float h, float rX, float rY, float rZ, float scale) {
-		super(model, position, hitbox, h, rX, rY, rZ, scale);
+		super(model, position, hitbox, rX, rY, rZ, scale);
 	}
 	
 	public void move() {

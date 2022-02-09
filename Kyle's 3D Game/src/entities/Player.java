@@ -22,8 +22,8 @@ public class Player extends Entity{
 
 	private boolean inAir = false;
 	
-	public Player(TexturedModel model, Vector3f position, AABB hitbox, float h, float rX, float rY, float rZ, float scale) {
-		super(model, position, hitbox, h, rX, rY, rZ, scale);
+	public Player(TexturedModel model, Vector3f position, AABB hitbox, float rX, float rY, float rZ, float scale) {
+		super(model, position, hitbox, rX, rY, rZ, scale);
 	}
 	
 	public void move(List<Terrain> world) {

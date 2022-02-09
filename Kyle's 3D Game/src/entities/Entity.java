@@ -11,24 +11,22 @@ public class Entity {
 	private Vector3f position;
 	private float rX, rY, rZ;
 	private float scale;
-	private float height;
-	
+
 	AABB hitbox;
 	
 	//index of texture in atlas
 	private int textureIndex = 0;
 	
-	public Entity(TexturedModel model, Vector3f position, AABB hitbox, float height, float rX, float rY, float rZ, float scale) {
+	public Entity(TexturedModel model, Vector3f position, AABB hitbox, float rX, float rY, float rZ, float scale) {
 		this.model = model;
 		this.position = position;
 		this.rX = rX;
 		this.rY = rY;
 		this.rZ = rZ;
-		this.height = height;
 		this.scale = scale;
 		
 		this.hitbox = hitbox;
-		//hitbox.translate(position, height);
+		hitbox.translate(this);
 	}
 	
 	public Entity(TexturedModel model, int index, Vector3f position, float rX, float rY, float rZ, float scale) {
@@ -56,7 +54,7 @@ public class Entity {
 		this.position.y += dy;
 		this.position.z += dz;
 		
-		//this.hitbox.translate(position, height);
+		hitbox.translate(this);
 	}
 	
 	public void increaseRotation(float dx, float dy, float dz) {

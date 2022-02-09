@@ -1,7 +1,9 @@
 package collision;
 
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+import entities.Entity;
 import toolbox.Maths;
 
 public class AABB {
@@ -19,8 +21,10 @@ public class AABB {
 			         (this.min_extents.z <= box2.max_extents.z && this.max_extents.z >= box2.min_extents.z);
 	}
 	
-	public void translate(Vector3f pos) {
-		//min_extents = Maths.addVec(vec1, vec2)
+	public void translate(Entity ent) {
+		Matrix4f entityMat = Maths.createTransformationMatrix(ent.getPosition(), ent.getrX(), ent.getrY(), ent.getrZ(), ent.getScale());
+		min_extents = Maths.mulVecAndMat(entityMat, min_extents);
+		max_extents = Maths.mulVecAndMat(entityMat, max_extents);
 	}
 	
 	public float getWidth() {
